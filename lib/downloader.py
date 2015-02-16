@@ -16,7 +16,7 @@ class ThreadedDownload(threading.Thread):
     handle = None
     info = None
 
-    def __init__(self, torrent_name, video_player):
+    def __init__(self, torrent_name, video_player=None):
         super(ThreadedDownload, self).__init__()
         self._stop = threading.Event()
 
@@ -62,7 +62,7 @@ class ThreadedDownload(threading.Thread):
             sys.stdout.flush()
 
             if not os.path.isfile(video_path + ".st"):
-                if (s.progress * 100) > 0.2:
+                if (s.progress * 100) > 1:
                     open(video_path + ".st", 'a').close()
 
                     self.video_player.source = video_path

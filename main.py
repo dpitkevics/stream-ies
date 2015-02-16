@@ -19,7 +19,7 @@ class StreamIesVideoPlayer(VideoPlayer):
         torrent_name = downloads_directory + "[kickass.to]supernatural.s10e04.hdtv.x264.lol.ettv.torrent"
 
         video_path = DOWNLOAD_DIR + os.sep + "Supernatural S10E04 HDTV x264-LOL[ettv]" + os.sep + "supernatural.1004.hdtv-lol.mp4"
-        if os.path.isfile(video_path):
+        if os.path.isfile(video_path + ".st"):
             self.source = video_path
 
             video_done_file_path = video_path + ".dn"
