@@ -3,12 +3,12 @@ import time
 import sys
 import os
 
-from settings import DOWNLOAD_DIR
+from settings import DOWNLOAD_DIR, VIDEO_FORMATS
 
 import threading
 
 
-class ThreadedDownload(threading.Thread):
+class Download:
     torrent_name = None
     video_player = None
 
@@ -17,9 +17,6 @@ class ThreadedDownload(threading.Thread):
     info = None
 
     def __init__(self, torrent_name, video_player=None):
-        super(ThreadedDownload, self).__init__()
-        self._stop = threading.Event()
-
         self.torrent_name = torrent_name
         self.video_player = video_player
 
@@ -29,21 +26,53 @@ class ThreadedDownload(threading.Thread):
 
         self.session = ses
 
-        self.info = lt.torrent_info(self.torrent_name)
+        self.info = self.retrieve_torrent_info()
         h = ses.add_torrent({'ti': self.info, 'save_path': DOWNLOAD_DIR})
         h.prioritize_pieces(7)
         h.set_sequential_download(True)
 
         self.handle = h
 
-    def run(self):
-        self.download_torrent()
+    def retrieve_torrent_info(self):
+        return lt.torrent_info(self.torrent_name)
+
+    def retrieve_video_file_path(self):
+        info = self.retrieve_torrent_info()
+
+        dir_name = ''
+
+        for f in info.files():
+            file_path = f.path
+            file_path_parts = file_path.split(os.sep)
+
+            if len(file_path_parts) > 1:
+                dir_name = file_path_parts[0]
+            else:
+                dir_name = ''
+
+        return dir_name
+
+    def retrieve_video_file_name(self):
+        torrent_dir = self.retrieve_video_file_path()
+
+        current_torrent_dir = DOWNLOAD_DIR + torrent_dir
+        if not os.path.isdir(current_torrent_dir):
+            video_path = DOWNLOAD_DIR
+        else:
+            matches = []
+            for root, dirnames, filenames in os.walk(current_torrent_dir):
+                matches.extend(os.path.join(root, filename) for filename in filenames if filename.lower().endswith(VIDEO_FORMATS))
+
+            if len(matches) > 1:
+                raise Exception("More than one video matched")
+
+            video_path = matches[0]
+
+        return video_path
 
     def download_torrent(self):
         if self.handle is None:
             self.set_handle()
-
-        video_path = DOWNLOAD_DIR + os.sep + "Supernatural S10E04 HDTV x264-LOL[ettv]" + os.sep + "supernatural.1004.hdtv-lol.mp4"
 
         while not self.handle.is_seed():
             s = self.handle.status()
@@ -61,6 +90,7 @@ class ThreadedDownload(threading.Thread):
                    s.num_peers, state_str[s.state]),
             sys.stdout.flush()
 
+            video_path = self.retrieve_video_file_name()
             if not os.path.isfile(video_path + ".st"):
                 if (s.progress * 100) > 1:
                     open(video_path + ".st", 'a').close()
@@ -69,5 +99,23 @@ class ThreadedDownload(threading.Thread):
 
             time.sleep(1)
 
+        video_path = self.retrieve_video_file_name()
         open(video_path + ".dn", 'a').close()
+
+
+class ThreadedDownload(threading.Thread, Download):
+    def __init__(self, torrent_name, video_player=None):
+        threading.Thread.__init__(self)
+        Download.__init__(self, torrent_name, video_player)
+        self._stop = threading.Event()
+
+    def run(self):
+        self.download_torrent()
+
+    def download_torrent(self):
+        super(ThreadedDownload, self).download_torrent()
+
+        self.stop()
+
+    def stop(self):
         self._stop.set()
