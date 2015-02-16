@@ -1,5 +1,8 @@
-Button:
-    height: "40dp"
-    size_hint_y: None
-    text: "Download Supernatural"
-    on_press: app.download_click()
+#:import downloader lib.downloader
+
+<MainWidget>
+    orientation: "vertical"
+
+    StreamIesVideoPlayer:
+        id: video_player
+</MainWidget>
