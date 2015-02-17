@@ -21,6 +21,8 @@ class StreamIesVideoPlayer(VideoPlayer):
     is_video_download_done = BooleanType(False)
 
     def __init__(self, **kwargs):
+        self.allow_fullscreen = True
+
         downloads_directory = expanduser("~") + os.sep + "Downloads" + os.sep
         torrent_name = downloads_directory + "[kickass.to]supernatural.s10e04.hdtv.x264.lol.ettv.torrent"
 
@@ -54,6 +56,8 @@ class StreamIesVideoPlayer(VideoPlayer):
         super(StreamIesVideoPlayer, self).__init__(**kwargs)
 
     def on_state(self, instance, value):
+        print(self._video.source)
+
         if not self.is_video_download_started:
             value = 'stop'
             popup = VideoPlayerPopup()
