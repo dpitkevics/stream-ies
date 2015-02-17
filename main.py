@@ -10,7 +10,7 @@ from kivy.uix.videoplayer import VideoPlayer
 
 from lib import downloader
 from lib.popups import VideoPlayerPopup
-
+from lib.video import Metadata
 
 threads = []
 
@@ -56,12 +56,13 @@ class StreamIesVideoPlayer(VideoPlayer):
         super(StreamIesVideoPlayer, self).__init__(**kwargs)
 
     def on_state(self, instance, value):
-        print(self._video.source)
-
         if not self.is_video_download_started:
             value = 'stop'
             popup = VideoPlayerPopup()
             popup.open()
+        else:
+            metadata = Metadata(self.video_path)
+            metadata.extract_metadata()
 
         return super(StreamIesVideoPlayer, self).on_state(instance, value)
 

@@ -96,10 +96,12 @@ class Download:
                     open(video_path + ".st", 'a').close()
 
                     self.video_player.is_video_download_started = True
+                    self.video_player.video_path = video_path
                     self.video_player.set_video_source(video_path)
 
             time.sleep(1)
 
+        print(self.video_player)
         self.video_player.is_video_download_done = True
         video_path = self.retrieve_video_file_name()
         open(video_path + ".dn", 'a').close()
