@@ -8,6 +8,8 @@ from types import StringType, BooleanType
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.videoplayer import VideoPlayer
 
+from hachoir_core.error import HachoirError
+
 from lib import downloader
 from lib.popups import VideoPlayerPopup
 from lib.video import Metadata
@@ -35,7 +37,7 @@ class StreamIesVideoPlayer(VideoPlayer):
 
             video_done_file_path = self.video_path + ".dn"
             if not os.path.isfile(video_done_file_path):
-                threaded_download = downloader.ThreadedDownload(torrent_name)
+                threaded_download = downloader.ThreadedDownload(torrent_name=torrent_name, video_player=self)
                 threaded_download.setName(torrent_name)
                 threaded_download.setDaemon(True)
                 threaded_download.start()
@@ -61,8 +63,15 @@ class StreamIesVideoPlayer(VideoPlayer):
             popup = VideoPlayerPopup()
             popup.open()
         else:
-            metadata = Metadata(self.video_path)
-            metadata.extract_metadata()
+            try:
+                metadata = Metadata(self.video_path)
+                metadata.extract_metadata()
+            except HachoirError as e:
+                value = 'stop'
+                popup = VideoPlayerPopup()
+                popup.open()
+
+                print(e)
 
         return super(StreamIesVideoPlayer, self).on_state(instance, value)
 

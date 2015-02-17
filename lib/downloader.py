@@ -101,7 +101,6 @@ class Download:
 
             time.sleep(1)
 
-        print(self.video_player)
         self.video_player.is_video_download_done = True
         video_path = self.retrieve_video_file_name()
         open(video_path + ".dn", 'a').close()
