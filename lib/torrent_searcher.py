@@ -3,9 +3,7 @@ import os
 import re
 import requests
 from requests.exceptions import RequestException
-import subprocess
 import sys
-import tabulate
 
 
 class OutColors:
@@ -25,7 +23,7 @@ class TorrentSearcher:
 
     def download_torrent(self, url):
         fname = os.getcwd() + '/' + url.split('title=')[-1] + '.torrent'
-        # http://stackoverflow.com/a/14114741/1302018
+
         try:
             r = requests.get(url, stream=True)
             with open(fname, 'wb') as f:
@@ -61,7 +59,16 @@ class TorrentSearcher:
         seeders = al[3::5]
         leechers = al[4::5]
 
-        print(size)
+        result_torrents = {
+            'href': href,
+            'size': size,
+            'title': title,
+            'age': age,
+            'seeders': seeders,
+            'leechers': leechers,
+        }
+
+        print(result_torrents)
 
 
 class TorrentsNotFoundException(Exception):

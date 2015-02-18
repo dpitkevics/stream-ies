@@ -1,3 +1,5 @@
+#:import ts lib.torrent_searcher.TorrentSearcher
+
 <MainWidget>
     orientation: "vertical"
 
@@ -6,10 +8,13 @@
         size_hint_y: None
 
         TextInput:
+            id: torrent_query
             size_hint_x: 75
         Button:
+            id: torrent_search
             text: "Search"
             size_hint_x: 25
+            on_press: root.torrent_searcher.make_search(root.ids.torrent_query.text)
 
     ListView:
         item_strings: ["Palo Alto, MX", "Palo Alto, US"]

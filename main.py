@@ -19,12 +19,13 @@ class VideoPlayerWidget(BoxLayout, KvLoader):
 
 class MainWidget(BoxLayout, KvLoader):
 
+    torrent_searcher = None
+
     def __init__(self, **kwargs):
+        self.torrent_searcher = TorrentSearcher()
+
         KvLoader.__init__(self)
         BoxLayout.__init__(self, **kwargs)
-
-        torrent_searcher = TorrentSearcher()
-        torrent_searcher.make_search("supernatural")
 
 
 class InterfaceManager(BoxLayout):
