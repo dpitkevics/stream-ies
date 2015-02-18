@@ -1,7 +1,22 @@
 <MainWidget>
     orientation: "vertical"
 
+    BoxLayout:
+        height: "40dp"
+        size_hint_y: None
+
+        TextInput:
+            size_hint_x: 75
+        Button:
+            text: "Search"
+            size_hint_x: 25
+
+    ListView:
+        item_strings: ["Palo Alto, MX", "Palo Alto, US"]
+
     Button:
         text: "Hello, World"
         on_press: app.interface_manager.switch_form('video_player')
+        height: "40dp"
+        size_hint_y: None
 </MainWidget>
