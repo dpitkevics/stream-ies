@@ -37,7 +37,10 @@ class MainWidget(BoxLayout, KvLoader):
 
         list_view.item_strings = []
         for show in shows:
-            list_view.item_strings.append(show['name'])
+            list_view.adapter.data.extend((show['name'],))
+            list_view.adapter.set_add_series_id(show['name'], show['showid'])
+
+        list_view._trigger_reset_populate()
 
 
 class InterfaceManager(BoxLayout):

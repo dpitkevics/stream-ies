@@ -1,3 +1,12 @@
+#:import la adapters.searcher_adapter.SearcherAdapter
+#:import lb adapters.searcher_adapter.SearcherAdapterButton
+
+<ListItemButton>
+    size_hint_y: None
+    height: "40dp"
+    on_release: root.on_menu_selection(self.index)
+</ListItemButton>
+
 <MainWidget>
     orientation: "vertical"
 
@@ -18,6 +27,8 @@
 
     ListView:
         id: search_result_list
+        adapter: la(data=[], cls=lb)
+        item_strings: []
 
     Button:
         text: "Hello, World"
