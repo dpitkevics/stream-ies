@@ -3,22 +3,25 @@ from kivy.app import App
 from types import DictionaryType, StringType
 
 from kivy.uix.boxlayout import BoxLayout
-from kivy.lang import Builder
 
 from lib.thread import threads
-from lib.kv import KvLoader
 from lib.torrent_searcher import TorrentSearcher
 from lib.series_searcher import SeriesSearcher
 
 
-class VideoPlayerWidget(BoxLayout, KvLoader):
+class VideoPlayerWidget(BoxLayout):
 
     def __init__(self, **kwargs):
-        KvLoader.__init__(self)
         BoxLayout.__init__(self, **kwargs)
 
 
-class MainWidget(BoxLayout, KvLoader):
+class MainWidget(BoxLayout):
+
+    def __init__(self, **kwargs):
+        BoxLayout.__init__(self, **kwargs)
+
+
+class SearchBarWidget(BoxLayout):
 
     torrent_searcher = None
     series_searcher = None
@@ -27,7 +30,6 @@ class MainWidget(BoxLayout, KvLoader):
         self.torrent_searcher = TorrentSearcher()
         self.series_searcher = SeriesSearcher()
 
-        KvLoader.__init__(self)
         BoxLayout.__init__(self, **kwargs)
 
     def do_search(self, query):
@@ -35,10 +37,43 @@ class MainWidget(BoxLayout, KvLoader):
 
         list_view = self.ids.search_result_list
 
-        list_view.item_strings = []
+        list_view.adapter.data = []
         for show in shows:
             list_view.adapter.data.extend((show['name'],))
             list_view.adapter.set_add_series_id(show['name'], show['showid'])
+
+        list_view._trigger_reset_populate()
+
+
+class TvShowWidget(BoxLayout):
+
+    show_data = None
+
+    def __init__(self, **kwargs):
+        BoxLayout.__init__(self, **kwargs)
+
+    def set_show_data(self, show_data):
+        self.show_data = show_data
+
+    def update_list_view(self):
+        list_view = self.ids.show_season_list
+
+        list_view.adapter.data = []
+        for season in self.show_data:
+            list_view.adapter.data.extend(('Season ' + str(season.number),))
+
+        list_view._trigger_reset_populate()
+
+    def show_episodes_in_list_view(self, season):
+        season_number = int(season.replace('Season ', ''))
+
+        season_object = [s for s in self.show_data if s.number is season_number][0]
+
+        list_view = self.ids.show_season_list
+
+        list_view.adapter.data = []
+        for episode in season_object.episodes:
+            list_view.adapter.data.extend((episode.title,))
 
         list_view._trigger_reset_populate()
 
@@ -47,6 +82,8 @@ class InterfaceManager(BoxLayout):
 
     forms = DictionaryType({})
     active_widget_key = StringType('')
+    active_widget = None
+    loaded_kvs = []
 
     def __init__(self, **kwargs):
         super(InterfaceManager, self).__init__(**kwargs)
@@ -58,15 +95,19 @@ class InterfaceManager(BoxLayout):
 
     def switch_form(self, key):
         self.clear_widgets()
-        if self.active_widget_key != '':
-            Builder.unload_file('kv/' + self.forms[self.active_widget_key].__class__.__name__)
 
         self.active_widget_key = key
 
         class_object = self.forms[key]()
+
         self.add_widget(class_object)
 
+        self.active_widget = class_object
+
         return self
+
+    def retrieve_active_widget(self):
+        return self.active_widget
 
 
 class StreamIesApp(App):
@@ -76,6 +117,7 @@ class StreamIesApp(App):
         self.interface_manager = InterfaceManager(orientation='vertical')
         self.interface_manager.add_form('main', MainWidget)
         self.interface_manager.add_form('video_player', VideoPlayerWidget)
+        self.interface_manager.add_form('tv_show', TvShowWidget)
 
         return self.interface_manager.switch_form('main')
 
@@ -85,4 +127,5 @@ class StreamIesApp(App):
 
 
 if __name__ == '__main__':
-    StreamIesApp().run()
+    app = StreamIesApp()
+    app.run()

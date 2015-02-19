@@ -80,6 +80,7 @@ class SeriesSearcher:
                                 season_object.add_episode(episode_object)
 
                         show_data.append(season_object)
+                        del season_object
 
         return show_data
 
@@ -89,6 +90,7 @@ class Season:
     episodes = []
 
     def __init__(self, season_number):
+        self.episodes = []
         self.number = season_number
 
     def add_episode(self, episode):

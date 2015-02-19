@@ -2,6 +2,7 @@ from kivy.adapters.listadapter import ListAdapter
 from kivy.uix.listview import ListItemButton
 
 from lib.series_searcher import SeriesSearcher
+from main import StreamIesApp
 
 
 class SearcherAdapterButton(ListItemButton):
@@ -12,7 +13,14 @@ class SearcherAdapterButton(ListItemButton):
         series_name = self.adapter.data[index]
 
         series_searcher = SeriesSearcher()
-        series_searcher.search_show_data_by_id(self.adapter.series_ids[series_name])
+        data = series_searcher.search_show_data_by_id(self.adapter.series_ids[series_name])
+
+        app = StreamIesApp.get_running_app()
+        app.interface_manager.switch_form('tv_show')
+
+        widget = app.interface_manager.retrieve_active_widget()
+        widget.set_show_data(data)
+        widget.update_list_view()
 
 
 class SearcherAdapter(ListAdapter):
