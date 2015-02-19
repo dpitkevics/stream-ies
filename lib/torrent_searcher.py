@@ -5,6 +5,8 @@ import requests
 from requests.exceptions import RequestException
 import sys
 
+from settings import DOWNLOAD_DIR
+
 
 class OutColors:
     DEFAULT = '\033[0m'
@@ -22,7 +24,11 @@ class TorrentSearcher:
         pass
 
     def download_torrent(self, url):
-        fname = os.getcwd() + '/' + url.split('title=')[-1] + '.torrent'
+        fdir = DOWNLOAD_DIR + 'trnt' + os.sep
+        if not os.path.isdir(fdir):
+            os.makedirs(fdir)
+
+        fname = fdir + url.split('title=')[-1] + '.torrent'
 
         try:
             r = requests.get(url, stream=True)
@@ -68,7 +74,7 @@ class TorrentSearcher:
             'leechers': leechers,
         }
 
-        print(result_torrents)
+        return result_torrents
 
 
 class TorrentsNotFoundException(Exception):

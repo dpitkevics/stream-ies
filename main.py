@@ -8,6 +8,7 @@ from kivy.lang import Builder
 from lib.thread import threads
 from lib.kv import KvLoader
 from lib.torrent_searcher import TorrentSearcher
+from lib.series_searcher import SeriesSearcher
 
 
 class VideoPlayerWidget(BoxLayout, KvLoader):
@@ -20,12 +21,23 @@ class VideoPlayerWidget(BoxLayout, KvLoader):
 class MainWidget(BoxLayout, KvLoader):
 
     torrent_searcher = None
+    series_searcher = None
 
     def __init__(self, **kwargs):
         self.torrent_searcher = TorrentSearcher()
+        self.series_searcher = SeriesSearcher()
 
         KvLoader.__init__(self)
         BoxLayout.__init__(self, **kwargs)
+
+    def do_search(self, query):
+        shows = self.series_searcher.search_shows_by_query(query)
+
+        list_view = self.ids.search_result_list
+
+        list_view.item_strings = []
+        for show in shows:
+            list_view.item_strings.append(show['name'])
 
 
 class InterfaceManager(BoxLayout):
