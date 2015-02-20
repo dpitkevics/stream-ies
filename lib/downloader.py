@@ -93,7 +93,8 @@ class Download:
         torrent_dir = self.retrieve_video_file_path()
 
         current_torrent_dir = DOWNLOAD_DIR + torrent_dir
-        if not os.path.isdir(current_torrent_dir):
+
+        if not os.path.isdir(current_torrent_dir) or current_torrent_dir == DOWNLOAD_DIR:
             video_path = DOWNLOAD_DIR
         else:
             matches = []

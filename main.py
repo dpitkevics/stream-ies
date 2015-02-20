@@ -81,6 +81,13 @@ class TvShowWidget(BoxLayout):
 
         list_view._trigger_reset_populate()
 
+    def before_switch(self):
+        print('before switch')
+
+        list_view = self.ids.show_season_list
+
+        list_view.adapter.cls.on_menu_selection = list_view.adapter.cls.show_episode_list
+
 
 class InterfaceManager(BoxLayout):
 
@@ -107,6 +114,9 @@ class InterfaceManager(BoxLayout):
         self.forms[key] = form
 
     def switch_form(self, key):
+        if self.active_widget is not None and "before_switch" in dir(self.active_widget):
+            self.active_widget.before_switch()
+
         self.clear_widgets()
 
         self.active_widget_key = key

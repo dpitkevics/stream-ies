@@ -10,6 +10,9 @@ class TvShowAdapterButton(ListItemButton):
     adapter = None
 
     def on_menu_selection(self, index):
+        self.show_episode_list(index)
+
+    def show_episode_list(self, index):
         series_name = self.adapter.data[index]
 
         app = StreamIesApp.get_running_app()
