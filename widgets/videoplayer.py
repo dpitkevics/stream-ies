@@ -1,9 +1,9 @@
 import os
-from os.path import expanduser
 
 from types import StringType, BooleanType
 
 from kivy.uix.videoplayer import VideoPlayer
+from kivy.core.window import Window
 
 from hachoir_core.error import HachoirError
 
@@ -110,3 +110,8 @@ class StreamIesVideoPlayer(VideoPlayer):
         self.source = video_path
 
         super(StreamIesVideoPlayer, self)._do_video_load()
+
+    def on_fullscreen(self, instance, value):
+        Window.fullscreen = value
+
+        return super(StreamIesVideoPlayer, self).on_fullscreen(instance, value)
