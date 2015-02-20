@@ -7,8 +7,6 @@
 <MainWidget>
     orientation: "vertical"
 
-    SearchBarWidget
-
     Label:
         text: "Welcome to Stream-Ies"
 </MainWidget>
@@ -29,8 +27,9 @@
         TextInput:
             id: torrent_query
             size_hint_x: 75
-            text: "Homeland"
+            multiline: False
             focus: True
+            on_text_validate: root.do_search(self.text)
         Button:
             id: torrent_search
             text: "Search"
@@ -46,8 +45,6 @@
 <TvShowWidget>
     orientation: "vertical"
 
-    SearchBarWidget
-
     ListView:
         id: show_season_list
         adapter: tvsa(data=[], cls=tvsb)
@@ -60,3 +57,12 @@
     StreamIesVideoPlayer:
         id: video_player
 </VideoPlayerWidget>
+
+<LayoutWidget>
+    orientation: 'vertical'
+
+    SearchBarWidget
+
+    InterfaceManager
+        id: interface_manager
+</LayoutWidget>

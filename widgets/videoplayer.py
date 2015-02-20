@@ -34,9 +34,9 @@ class StreamIesVideoPlayer(VideoPlayer):
 
         self.allow_fullscreen = True
 
-        downloads_directory = expanduser("~") + os.sep + "Downloads" + os.sep
-        torrent_name = downloads_directory + "[kickass.to]supernatural.s10e04.hdtv.x264.lol.ettv.torrent"
+        super(StreamIesVideoPlayer, self).__init__(**kwargs)
 
+    def set_up_video_from_torrent(self, torrent_name):
         # Retrieve video path from torrent file
         dl = downloader.Download(torrent_name)
         self.video_path = dl.retrieve_video_file_name()
@@ -68,8 +68,6 @@ class StreamIesVideoPlayer(VideoPlayer):
             threaded_download.join(0.1)
 
             threads.append(threaded_download)
-
-        super(StreamIesVideoPlayer, self).__init__(**kwargs)
 
     def on_state(self, instance, value):
         """

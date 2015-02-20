@@ -71,9 +71,13 @@ class TvShowWidget(BoxLayout):
 
         list_view = self.ids.show_season_list
 
+        list_view.adapter.cls.on_menu_selection = list_view.adapter.cls.show_episode
+
         list_view.adapter.data = []
         for episode in season_object.episodes:
-            list_view.adapter.data.extend((episode.title,))
+            item_title = '%s Season %d Episode %d - %s' % (season_object.show_title, season_object.number, episode.seasonnum, episode.title)
+            list_view.adapter.data.extend((item_title,))
+            list_view.adapter.add_episode_search_string(item_title, episode)
 
         list_view._trigger_reset_populate()
 
@@ -89,6 +93,15 @@ class InterfaceManager(BoxLayout):
         super(InterfaceManager, self).__init__(**kwargs)
 
         self.forms = {}
+
+        self.load_forms()
+
+    def load_forms(self):
+        self.add_form('main', MainWidget)
+        self.add_form('video_player', VideoPlayerWidget)
+        self.add_form('tv_show', TvShowWidget)
+
+        self.switch_form('main')
 
     def add_form(self, key, form):
         self.forms[key] = form
@@ -110,16 +123,21 @@ class InterfaceManager(BoxLayout):
         return self.active_widget
 
 
+class LayoutWidget(BoxLayout):
+
+    def __init__(self, **kwargs):
+        super(LayoutWidget, self).__init__(**kwargs)
+
+
 class StreamIesApp(App):
     interface_manager = None
 
     def build(self):
-        self.interface_manager = InterfaceManager(orientation='vertical')
-        self.interface_manager.add_form('main', MainWidget)
-        self.interface_manager.add_form('video_player', VideoPlayerWidget)
-        self.interface_manager.add_form('tv_show', TvShowWidget)
+        layout_widget = LayoutWidget()
 
-        return self.interface_manager.switch_form('main')
+        self.interface_manager = layout_widget.ids.interface_manager
+
+        return layout_widget
 
     def on_stop(self):
         for i in range(len(threads)):

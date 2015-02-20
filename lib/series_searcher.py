@@ -1,6 +1,8 @@
 from urllib2 import quote
 import requests
-from types import IntType, StringType, DictionaryType
+from types import IntType, StringType
+
+from lib.cache import cache_it
 
 try:
     from lxml import etree
@@ -40,6 +42,7 @@ class SeriesSearcher:
     def __init__(self):
         pass
 
+    @cache_it
     def search_shows_by_query(self, query):
         xml = requests.get(self.BASE_URL % ('search', 'show', quote(query)))
 
@@ -55,19 +58,22 @@ class SeriesSearcher:
 
         return shows
 
+    @cache_it
     def search_show_data_by_id(self, show_id):
         xml = requests.get(self.BASE_URL % ('episode_list', 'sid', quote(show_id)))
 
         xmltree = etree.fromstring(xml.content)
 
         show_data = []
+        show_name = xmltree[0].text
+
         for element in xmltree:
             if element.tag == 'Episodelist':
                 for season in element:
                     if season.tag == 'Season':
                         season_number = int(season.attrib['no'])
 
-                        season_object = Season(season_number=season_number)
+                        season_object = Season(show_title=show_name, season_number=season_number)
                         for episode in season:
                             episode_object = Episode(season_object)
                             for episode_row in episode:
@@ -86,11 +92,13 @@ class SeriesSearcher:
 
 
 class Season:
+    show_title = StringType('')
     number = IntType(0)
     episodes = []
 
-    def __init__(self, season_number):
+    def __init__(self, show_title, season_number):
         self.episodes = []
+        self.show_title = show_title
         self.number = season_number
 
     def add_episode(self, episode):
