@@ -59,14 +59,14 @@ class TvShowWidget(BoxLayout):
         list_view = self.ids.show_season_list
 
         list_view.adapter.data = []
+        list_view.adapter.season_data = []
         for season in self.show_data:
             list_view.adapter.data.extend(('Season ' + str(season.number),))
+            list_view.adapter.season_data.append(season.number)
 
         list_view._trigger_reset_populate()
 
-    def show_episodes_in_list_view(self, season):
-        season_number = int(season.replace('Season ', ''))
-
+    def show_episodes_in_list_view(self, season_number):
         season_object = [s for s in self.show_data if s.number is season_number][0]
 
         list_view = self.ids.show_season_list
@@ -82,8 +82,6 @@ class TvShowWidget(BoxLayout):
         list_view._trigger_reset_populate()
 
     def before_switch(self):
-        print('before switch')
-
         list_view = self.ids.show_season_list
 
         list_view.adapter.cls.on_menu_selection = list_view.adapter.cls.show_episode_list

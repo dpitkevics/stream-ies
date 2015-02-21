@@ -29,6 +29,7 @@
             size_hint_x: 75
             multiline: False
             focus: True
+            text: "﻿the big bang theory"
             on_text_validate: root.do_search(self.text)
         Button:
             id: torrent_search
@@ -57,6 +58,24 @@
     StreamIesVideoPlayer:
         id: video_player
 </VideoPlayerWidget>
+
+<StreamIesVideoPlayer>
+    id: video_player
+
+    Button:
+        id: play_button
+        text: "Play"
+        on_press: root.toggle_video_state()
+        size_hint_x: 50
+        width: "100dp"
+
+#    Button:
+#        id: fullscreen_button
+#        text: "Fullscreen"
+#        on_press: root.toggle_fullscreen_state()
+#        size_hint_x: 50
+#        width: "100dp"
+</StreamIesVideoPlayer>
 
 <LayoutWidget>
     orientation: 'vertical'

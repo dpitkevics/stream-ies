@@ -13,14 +13,13 @@ class TvShowAdapterButton(ListItemButton):
         self.show_episode_list(index)
 
     def show_episode_list(self, index):
-        series_name = self.adapter.data[index]
-
         app = StreamIesApp.get_running_app()
         widget = app.interface_manager.retrieve_active_widget()
-        widget.show_episodes_in_list_view(series_name)
+        widget.show_episodes_in_list_view(index+1)
 
     def show_episode(self, index):
         series_name = self.adapter.data[index]
+        print(series_name)
         torrent_query = self.adapter.episode_search_strings[series_name]
 
         torrent_searcher = TorrentSearcher()
@@ -39,6 +38,7 @@ class TvShowAdapterButton(ListItemButton):
 class TvShowAdapter(ListAdapter):
 
     episode_search_strings = {}
+    season_data = []
 
     def add_episode_search_string(self, item_title, episode):
         self.episode_search_strings[item_title] = self.parse_item_title(episode)

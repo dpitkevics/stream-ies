@@ -3,7 +3,9 @@ import os
 from types import StringType, BooleanType
 
 from kivy.uix.videoplayer import VideoPlayer
+from kivy.uix.video import Video
 from kivy.core.window import Window
+from kivy.logger import Logger
 
 from hachoir_core.error import HachoirError
 
@@ -13,7 +15,7 @@ from lib.video import Metadata
 from lib.thread import threads
 
 
-class StreamIesVideoPlayer(VideoPlayer):
+class StreamIesVideoPlayer(Video):
     """
     Class for video player specified exactly to Stream-Ies application
     Is extendind built-in Kivy VideoPlayer for ease of use
@@ -22,6 +24,8 @@ class StreamIesVideoPlayer(VideoPlayer):
     video_path = StringType('')
     is_video_download_started = BooleanType(False)
     is_video_download_done = BooleanType(False)
+
+    is_playing = BooleanType(False)
 
     def __init__(self, **kwargs):
         """
@@ -111,7 +115,74 @@ class StreamIesVideoPlayer(VideoPlayer):
 
         super(StreamIesVideoPlayer, self)._do_video_load()
 
-    def on_fullscreen(self, instance, value):
-        Window.fullscreen = value
+    # def on_fullscreen(self, instance, value):
+    #     Window.fullscreen = value
+    #
+    #     return super(StreamIesVideoPlayer, self).on_fullscreen(instance, value)
 
-        return super(StreamIesVideoPlayer, self).on_fullscreen(instance, value)
+    def toggle_video_state(self):
+
+        if self.is_playing:
+            self.state = 'pause'
+            self.is_playing = False
+
+            self.ids.play_button.text = 'Play'
+        else:
+            self.state = 'play'
+            self.is_playing = True
+
+            self.ids.play_button.text = 'Pause'
+
+    def toggle_fullscreen_state(self):
+        self.on_fullscreen(True)
+
+    def on_fullscreen(self, value):
+        window = self.get_parent_window()
+        if not window:
+            Logger.warning('VideoPlayer: Cannot switch to fullscreen, '
+                           'window not found.')
+            if value:
+                self.fullscreen = False
+            return
+        if not self.parent:
+            Logger.warning('VideoPlayer: Cannot switch to fullscreen, '
+                           'no parent.')
+            if value:
+                self.fullscreen = False
+            return
+
+        if value:
+            self._fullscreen_state = state = {
+                'parent': self.parent,
+                'pos': self.pos,
+                'size': self.size,
+                'pos_hint': self.pos_hint,
+                'size_hint': self.size_hint,
+                'window_children': window.children[:]}
+
+            # remove all window children
+            for child in window.children[:]:
+                window.remove_widget(child)
+
+            # put the video in fullscreen
+            if state['parent'] is not window:
+                state['parent'].remove_widget(self)
+            window.add_widget(self)
+
+            # ensure the video widget is in 0, 0, and the size will be
+            # reajusted
+            self.pos = (0, 0)
+            self.size = (100, 100)
+            self.pos_hint = {}
+            self.size_hint = (1, 1)
+        else:
+            state = self._fullscreen_state
+            window.remove_widget(self)
+            for child in state['window_children']:
+                window.add_widget(child)
+            self.pos_hint = state['pos_hint']
+            self.size_hint = state['size_hint']
+            self.pos = state['pos']
+            self.size = state['size']
+            if state['parent'] is not window:
+                state['parent'].add_widget(self)
