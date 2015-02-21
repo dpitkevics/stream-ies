@@ -2,7 +2,7 @@ from kivy.adapters.listadapter import ListAdapter
 from kivy.uix.listview import ListItemButton
 
 from lib.series_searcher import SeriesSearcher
-from main import StreamIesApp
+from main_kivy import StreamIesApp
 
 
 class SearcherAdapterButton(ListItemButton):

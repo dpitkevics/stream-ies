@@ -1,7 +1,7 @@
 from kivy.adapters.listadapter import ListAdapter
 from kivy.uix.listview import ListItemButton
 
-from main import StreamIesApp
+from main_kivy import StreamIesApp
 from lib.torrent_searcher import TorrentSearcher
 
 
