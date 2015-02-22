@@ -1,8 +1,12 @@
 from urllib2 import quote
 import requests
 from types import IntType, StringType
+import urllib
+import os
+from PIL import Image
 
 from lib.cache import cache_it
+from settings import RESOURCES_DIR
 
 try:
     from lxml import etree
@@ -54,9 +58,33 @@ class SeriesSearcher:
             for show_row in element:
                 show_data[show_row.tag] = show_row.text
             else:
+                show_data['image_url'] = self.retrieve_image_url(show_data['link'])
                 shows.append(show_data)
 
         return shows
+
+    @cache_it
+    def retrieve_image_url(self, show_url):
+        request = requests.get(show_url)
+
+        html = request.content
+        html = html[html.index('http://images.tvrage.com/shows/'):]
+        image_url = html[:html.index('\'>')]
+
+        image_path = RESOURCES_DIR + os.sep + "images" + os.sep + "uploads" + os.sep + image_url.replace('/', '_').replace(':', '_')
+        urllib.urlretrieve(image_url, image_path)
+
+        im = Image.open(image_path)
+        image_path_png = image_path.replace('.jpg', '.png')
+        im.save(image_path_png, 'PNG')
+
+        im_small = Image.open(image_path_png)
+        im_small.thumbnail((128, 128), Image.ANTIALIAS)
+        im_small.save(image_path_png)
+
+        os.remove(image_path)
+
+        return image_path_png
 
     @cache_it
     def search_show_data_by_id(self, show_id):

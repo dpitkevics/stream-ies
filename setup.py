@@ -13,6 +13,6 @@ setup(
         'libtorrent',
         'hachoir_core',
         'hachoir_parser',
-        'hachoir_metadata',
+        'hachoir_metadata', 'PySide', 'ui_quitter', 'PIL'
     ]
 )
