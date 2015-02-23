@@ -17,6 +17,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.search_button.clicked.connect(self.search_button_click)
+        self.search_query.returnPressed.connect(self.search_button_click)
 
     def search_button_click(self):
         query = self.search_query.text()
