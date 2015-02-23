@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='stream-ies',
     version='0.01',
-    packages=['', 'lib', 'adapters', 'widgets', 'windows'],
+    packages=['', 'lib', 'adapters', 'widgets', 'windows', 'cache', 'temp', 'resources'],
     url='',
     license='',
     author='Daniels',
