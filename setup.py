@@ -15,7 +15,6 @@ setup(
         'hachoir_parser',
         'hachoir_metadata',
         'PySide',
-        'ui_quitter',
         'Pillow',
         'requests',
         'pyfscache',
