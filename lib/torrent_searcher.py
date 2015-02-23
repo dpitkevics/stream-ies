@@ -76,6 +76,22 @@ class TorrentSearcher:
 
         return result_torrents
 
+    @staticmethod
+    def parse_item_title(episode):
+        if episode.season.number < 10:
+            season_number = '0' + str(episode.season.number)
+        else:
+            season_number = str(episode.season.number)
+
+        if episode.seasonnum < 10:
+            episode_number = '0' + str(episode.seasonnum)
+        else:
+            episode_number = str(episode.seasonnum)
+
+        search_string = '%s S%sE%s' % (episode.season.show_title, season_number, episode_number)
+
+        return search_string
+
 
 class TorrentsNotFoundException(Exception):
     pass

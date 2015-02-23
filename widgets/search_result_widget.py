@@ -4,7 +4,8 @@ from PySide import QtCore
 
 class SearchResultWidget(QWidget):
 
-    def __init__(self, shows):
+    def __init__(self, main_window, shows):
+        self.main_window = main_window
         self.shows = shows
         self.main_layout = QVBoxLayout()
 
@@ -14,20 +15,20 @@ class SearchResultWidget(QWidget):
 
     def init_ui(self):
         for show in self.shows:
-            self.main_layout.addWidget(SearchResultItemWidget(show))
+            self.main_layout.addWidget(SearchResultItemWidget(self.main_window, show))
 
         self.setLayout(self.main_layout)
 
 
 class SearchResultItemWidget(QWidget):
 
-    def __init__(self, show_data):
+    def __init__(self, main_window, show_data):
+        self.main_window = main_window
         self.show_data = show_data
         self.main_layout = QHBoxLayout()
 
         super(SearchResultItemWidget, self).__init__()
 
-        self.setMouseTracking(True)
         self.setAutoFillBackground(True)
         self.init_ui()
 
@@ -49,12 +50,7 @@ class SearchResultItemWidget(QWidget):
         self.setLayout(self.main_layout)
 
     def mousePressEvent(self, event):
-        print(event)
-
-        super(SearchResultItemWidget, self).mousePressEvent(event)
-
-    def mouseMoveEvent(self, event):
-        super(SearchResultItemWidget, self).mouseMoveEvent(event)
+        self.main_window.search_result_item_click(self.show_data)
 
 
 class SearchResultItemDescriptionWidget(QWidget):
