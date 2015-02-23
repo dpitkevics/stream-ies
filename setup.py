@@ -18,6 +18,13 @@ setup(
         'ui_quitter',
         'Pillow',
         'requests',
-        'pyfscache'
+        'pyfscache',
+        'beautifulsoup4',
+        'phonon'
+    ],
+    data_files=[
+        ('phonon_backend', [
+            'C:\Python27\Lib\site-packages\PyQt4\plugins\phonon_backend\phonon_ds94.dll'
+        ])
     ]
 )
