@@ -1,4 +1,5 @@
-from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPixmap
+from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPixmap, QCursor
+from PySide import QtCore
 
 
 class SearchResultWidget(QWidget):
@@ -26,9 +27,15 @@ class SearchResultItemWidget(QWidget):
 
         super(SearchResultItemWidget, self).__init__()
 
+        self.setMouseTracking(True)
+        self.setAutoFillBackground(True)
         self.init_ui()
 
     def init_ui(self):
+        self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
+        self.setStyleSheet(':hover { background-color: #ccc;}')
+        self.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+
         image_label = QLabel()
         image_label.setFixedWidth(128)
         pixmap = QPixmap(self.show_data['image_url'])
@@ -40,6 +47,14 @@ class SearchResultItemWidget(QWidget):
         self.main_layout.addWidget(SearchResultItemDescriptionWidget(self.show_data))
 
         self.setLayout(self.main_layout)
+
+    def mousePressEvent(self, event):
+        print(event)
+
+        super(SearchResultItemWidget, self).mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        super(SearchResultItemWidget, self).mouseMoveEvent(event)
 
 
 class SearchResultItemDescriptionWidget(QWidget):
