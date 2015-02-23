@@ -10,7 +10,7 @@ setup(
     author_email='',
     description='',
     install_requires=[
-        'libtorrent',
+        #'libtorrent',
         'hachoir_core',
         'hachoir_parser',
         'hachoir_metadata',
