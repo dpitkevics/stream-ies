@@ -71,7 +71,7 @@ class SeriesSearcher:
         html = html[html.index('http://images.tvrage.com/shows/'):]
         image_url = html[:html.index('\'>')]
 
-        image_path = RESOURCES_DIR + os.sep + "images" + os.sep + "uploads" + os.sep + image_url.replace('/', '_').replace(':', '_')
+        image_path = RESOURCES_DIR + "images" + os.sep + "uploads" + os.sep + image_url.replace('/', '_').replace(':', '_')
         urllib.urlretrieve(image_url, image_path)
 
         im = Image.open(image_path)
