@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='stream-ies',
     version='0.01',
-    packages=['lib'],
+    packages=['', 'lib', 'adapters', 'widgets', 'windows'],
     url='',
     license='',
     author='Daniels',
